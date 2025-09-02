@@ -1,0 +1,69 @@
+Method: 1
+
+* clang++ glut.cpp -I/usr/local/include -L/usr/local/lib -lglut -lGL -o glutApp
+* ./glutApp
+
+{% comment %}
+? glut.cpp -> file name
+? glutApp -> Define the name of the output file
+? ./glutApp -> output file name for run the program
+{% endcomment %}
+
+
+Method: 2
+Create an tasks.json file in the .vscode folder
+and paste:
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build and run (FreeGLUT)",
+      "type": "shell",
+      "command": "clang++",
+      "args": [
+        "CPP/glut.cpp", // <-- your file path
+        "-I/usr/local/include",
+        "-L/usr/local/lib",
+        "-lglut",
+        "-lGL",
+        "-o",
+        "CPP/glutApp", // output inside CPP/
+        "&&",
+        "./CPP/glutApp" // run from CPP/
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}
+{% comment %}
+? tasks.json file create:
+
+* 1. VS Code open koro.
+* 2. Top menu theke Terminal → Configure Tasks... → Create tasks.json file from template → Others select koro.
+* 3. Eta automatically .vscode/tasks.json create korbe.
+* 4. pasts the json code
+* 5. run the program (cmd+shift+b)
+
+if VSCode jodi jiggesh kore "Select the build task", oikhane build and run (FreeGLUT) select koro.
+
+{% endcomment %}
+
+
+Method: 3
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h>
+[add this inside the file (glut.cpp) instead of using #include <GL/glut.h>]
+
+Then run this two command
+* clang++ glut.cpp -framework OpenGL -framework GLUT -o glutApp
+* ./glutApp
+
+{% comment %}
+? glut.cpp -> file name
+? glutApp -> Define the name of the output file
+? ./glutApp -> output file name for run the program
+{% endcomment %}

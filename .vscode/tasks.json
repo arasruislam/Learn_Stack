@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build and run (FreeGLUT)",
+      "type": "shell",
+      "command": "clang++",
+      "args": [
+        "CPP/glut.cpp", // <-- your file path
+        "-I/usr/local/include",
+        "-L/usr/local/lib",
+        "-lglut",
+        "-lGL",
+        "-o",
+        "CPP/glutApp", // output inside CPP/
+        "&&",
+        "./CPP/glutApp" // run from CPP/
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}
