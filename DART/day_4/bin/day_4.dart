@@ -1,4 +1,10 @@
-void main(){
+int myFun(){
+  print("This is from function");
 
-  print("hello");
+  return 0;
 }
+
+void main(){
+myFun();
+}
+
