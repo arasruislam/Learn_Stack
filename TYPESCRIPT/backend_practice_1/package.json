@@ -2,7 +2,9 @@
   "name": "backend_practice_1",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts"
+  },
   "keywords": [],
   "author": "Ashraful <arasru01@gmail.com>",
   "license": "MIT",

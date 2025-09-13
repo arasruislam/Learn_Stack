@@ -1,0 +1,6 @@
+ERR 2025-09-06T21:09:24.107 ui.7198    terminfo_start:532: uv_pipe_open failed: inappropriate ioctl for device
+ERR 2025-09-06T21:09:24.108 ui.7198    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-06T21:09:24.108 ui.7198    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-06T21:09:24.111 ui.7198    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-06T21:09:24.111 ui.7198    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-06T21:09:25.115 ui.7198    flush_buf:2647: uv_write failed: bad file descriptor
