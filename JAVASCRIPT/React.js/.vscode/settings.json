@@ -33,5 +33,8 @@
   "zenMode.fullScreen": true,
   "zenMode.hideStatusBar": true,
   "zenMode.hideActivityBar": true,
-  "zenMode.restore": true
+  "zenMode.restore": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
