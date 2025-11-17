@@ -5,7 +5,7 @@ function Product() {
 
   function addToCart() {
     setQuantity(quantity + 1);
-  }
+  } 
 
   return (
     <div className="shadow-md rounded-lg bg-slate-800 border-slate-700">
