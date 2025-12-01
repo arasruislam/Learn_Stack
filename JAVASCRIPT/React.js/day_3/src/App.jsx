@@ -1,10 +1,9 @@
-import Gallery from "./components/Gallery";
+import List from "./components/List";
 
 function App() {
   return (
     <div>
-      <p>Hello world!</p>
-      <Gallery />
+      <List />
     </div>
   );
 }
