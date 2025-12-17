@@ -4,8 +4,8 @@ services:
     container_name: sql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: arasruislam
-      MYSQL_DATABASE: study
+      MYSQL_ROOT_PASSWORD: labfinal
+      MYSQL_DATABASE: Library Management System # change as you need
     ports:
       - "3306:3306"
     # volumes:

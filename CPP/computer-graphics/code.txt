@@ -1,0 +1,694 @@
+DDA ALGO----------------------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <iostream>
+#include <math.h>
+using namespace std;
+
+int x_start, y_start, x_end, y_end;   // global variables for endpoints
+
+void drawLineDDA(int x1, int y1, int x2, int y2) {
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+
+    float xInc = dx / (float)steps;
+    float yInc = dy / (float)steps;
+
+    float x = x1;
+    float y = y1;
+
+    glBegin(GL_POINTS);
+    for (int i = 0; i <= steps; i++) {
+        glVertex2i(round(x), round(y));
+        x += xInc;
+        y += yInc;
+    }
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1, 0, 0);   // red line
+    drawLineDDA(x_start, y_start, x_end, y_end);
+    glFlush();
+}
+
+void init() {
+    glClearColor(1, 1, 1, 1);   // white background
+    glColor3f(1, 0, 0);
+    glPointSize(2);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 500, 0, 500);
+}
+
+int main(int argc, char** argv) {
+    // ðŸŸ¢ Very easy input section
+    cout << "Enter starting point (x1 y1): ";
+    cin >> x_start >> y_start;
+    cout << "Enter ending point (x2 y2): ";
+    cin >> x_end >> y_end;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("DDA Line Drawing Algorithm");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+-------------------------------------------------------------------------------------------------
+bresenhamLine ALGO-------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <iostream>
+using namespace std;
+
+int x1_, y1_, x2_, y2_;  // use underscore to avoid confusion with std::x1
+
+void putPixel(int x, int y)
+{
+    glBegin(GL_POINTS);
+        glVertex2i(x, y);
+    glEnd();
+}
+
+// Bresenham’s Line Drawing Algorithm (Textbook style)
+void bresenhamLine(int x1, int y1, int x2, int y2)
+{
+    int x, y, dx, dy, p;
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+
+    x = x1;
+    y = y1;
+
+    putPixel(x, y);  // starting point
+
+    p = 2 * dy - dx;
+
+    while (x < x2)
+    {
+        if (p < 0)
+        {
+            x = x + 1;
+            p = p + 2 * dy;
+        }
+        else
+        {
+            x = x + 1;
+            y = y + 1;
+            p = p + 2 * (dy - dx);
+        }
+        putPixel(x, y);
+    }
+}
+
+void display()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 0.0, 0.0); // red line
+
+    bresenhamLine(x1_, y1_, x2_, y2_);
+
+    glFlush();
+}
+
+void init()
+{
+    glClearColor(1.0, 1.0, 1.0, 1.0); // white background
+    glColor3f(1.0, 0.0, 0.0);
+    glPointSize(3.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 500, 0, 500); // 2D coordinate system
+}
+
+int main(int argc, char** argv)
+{
+    cout << "Enter x1 y1: ";
+    cin >> x1_ >> y1_;
+    cout << "Enter x2 y2: ";
+    cin >> x2_ >> y2_;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Bresenham Line Drawing Algorithm");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+
+    return 0;
+}
+----------------------------------------------------------------------------------------------------------------------------------------------
+Midpoint ALGO-------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <iostream>
+using namespace std;
+
+int xc, yc, r;   // center and radius
+
+// Function to plot the 8 symmetric points
+void drawSymmetryPoints(int x, int y, int xc, int yc) {
+    glVertex2i(xc + x, yc + y);
+    glVertex2i(xc - x, yc + y);
+    glVertex2i(xc + x, yc - y);
+    glVertex2i(xc - x, yc - y);
+    glVertex2i(xc + y, yc + x);
+    glVertex2i(xc - y, yc + x);
+    glVertex2i(xc + y, yc - x);
+    glVertex2i(xc - y, yc - x);
+}
+
+// Midpoint Circle Drawing Algorithm
+void drawCircle(int xc, int yc, int r) {
+    int x = 0;
+    int y = r;
+    int p = 1 - r;
+
+    glBegin(GL_POINTS);
+    drawSymmetryPoints(x, y, xc, yc);
+
+    while (x < y) {
+        x++;
+        if (p < 0)
+            p += 2 * x + 1;
+        else {
+            y--;
+            p += 2 * (x - y) + 1;
+        }
+        drawSymmetryPoints(x, y, xc, yc);
+    }
+    glEnd();
+}
+
+// Display callback
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 0.0, 1.0);   // blue color
+    drawCircle(xc, yc, r);
+    glFlush();
+}
+
+// Initialization
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);  // white background
+    glPointSize(2.0);                  // point size
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, 500, 0, 500);        // 2D coordinate system
+}
+
+// Main
+int main(int argc, char** argv) {
+    cout << "Enter center (xc yc): ";
+    cin >> xc >> yc;
+    cout << "Enter radius: ";
+    cin >> r;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Midpoint Circle Drawing Algorithm");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+
+-------------------------------------------------------------------------------------
+Flood Fill ALGO-----------------------------------------------------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+
+// Starting pixel for flood fill
+int fillColor[3] = {1, 0, 0};   // Red
+int oldColor[3]  = {0, 0, 0};   // Black
+
+int startX = 55, startY = 55;   // Inside rectangle
+
+// Function to get color of a pixel
+void getPixelColor(int x, int y, int color[3]) {
+    unsigned char pixel[3];
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
+    color[0] = pixel[0] / 255.0;
+    color[1] = pixel[1] / 255.0;
+    color[2] = pixel[2] / 255.0;
+}
+
+// Function to set pixel color
+void putPixelColor(int x, int y, int color[3]) {
+    glColor3f(color[0], color[1], color[2]);
+    glBegin(GL_POINTS);
+        glVertex2i(x, y);
+    glEnd();
+    glFlush();
+}
+
+void floodFill(int x, int y) {
+    int current[3];
+    getPixelColor(x, y, current);
+
+    if (current[0] == oldColor[0] && current[1] == oldColor[1] && current[2] == oldColor[2]) {
+        putPixelColor(x, y, fillColor);
+
+        floodFill(x + 1, y);
+        floodFill(x - 1, y);
+        floodFill(x, y + 1);
+        floodFill(x, y - 1);
+        floodFill(x + 1, y + 1);
+        floodFill(x + 1, y - 1);
+        floodFill(x - 1, y + 1);
+        floodFill(x - 1, y - 1);
+    }
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw rectangle (same as TurboC rectangle(50,50,100,100))
+    glColor3f(1, 1, 1);
+    glBegin(GL_LINE_LOOP);
+        glVertex2i(50, 50);
+        glVertex2i(100, 50);
+        glVertex2i(100, 100);
+        glVertex2i(50, 100);
+    glEnd();
+    glFlush();
+
+    // Call flood fill
+    floodFill(startX, startY);
+}
+
+void init() {
+    glClearColor(0, 0, 0, 1);          // Black background
+    gluOrtho2D(0, 640, 0, 480);        // Same coordinate style as BGI
+    glPointSize(1.0);
+}
+
+int main(int argc, char **argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(640, 480);
+    glutCreateWindow("Flood Fill");
+
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+--------------------------------------------------------------------------------
+
+Boundary Fill Algo------------------------------------------------------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <iostream>
+using namespace std;
+
+int x, y, fcolor, bcolor;
+int winW = 500, winH = 500;
+
+// RGB colors for 0-7 (like Turbo C)
+float colors[8][3] = {
+    {0,0,0},   // 0 - Black
+    {1,0,0},   // 1 - Red
+    {0,1,0},   // 2 - Green
+    {0,0,1},   // 3 - Blue
+    {1,1,0},   // 4 - Yellow
+    {1,0,1},   // 5 - Magenta
+    {0,1,1},   // 6 - Cyan
+    {1,1,1}    // 7 - White
+};
+
+// Set drawing color
+void setColor(int c) {
+    glColor3f(colors[c][0], colors[c][1], colors[c][2]);
+}
+
+// Draw a pixel
+void putpixel(int px, int py, int c) {
+    setColor(c);
+    glBegin(GL_POINTS);
+        glVertex2i(px, py);
+    glEnd();
+    glFlush();
+}
+
+// Get color of a pixel
+int getpixel(int px, int py) {
+    unsigned char pixel[3];
+    glReadPixels(px, py, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
+
+    for(int i = 0; i < 8; i++) {
+        if((int)(pixel[0]) == (int)(colors[i][0]*255) &&
+           (int)(pixel[1]) == (int)(colors[i][1]*255) &&
+           (int)(pixel[2]) == (int)(colors[i][2]*255))
+            return i;
+    }
+    return 0; // Black by default
+}
+
+// 8-connected boundary fill
+void boundary_fill(int px, int py, int fill, int boundary) {
+    int current = getpixel(px, py);
+    if(current != boundary && current != fill) {
+        // Optional delay for visualization
+        Sleep(10);  // milliseconds
+        putpixel(px, py, fill);
+
+        // 8 directions
+        boundary_fill(px + 1, py, fill, boundary);
+        boundary_fill(px - 1, py, fill, boundary);
+        boundary_fill(px, py + 1, fill, boundary);
+        boundary_fill(px, py - 1, fill, boundary);
+        boundary_fill(px + 1, py + 1, fill, boundary);
+        boundary_fill(px - 1, py + 1, fill, boundary);
+        boundary_fill(px + 1, py - 1, fill, boundary);
+        boundary_fill(px - 1, py - 1, fill, boundary);
+    }
+}
+
+// Draw rectangle and call boundary fill
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    setColor(bcolor);
+    glBegin(GL_LINE_LOOP);
+        glVertex2i(50, 50);
+        glVertex2i(100, 50);
+        glVertex2i(100, 100);
+        glVertex2i(50, 100);
+    glEnd();
+    glFlush();
+
+    boundary_fill(x, y, fcolor, bcolor);
+}
+
+int main(int argc, char** argv) {
+    cout << "Enter the seed point (x y): ";
+    cin >> x >> y;
+
+    cout << "Enter boundary color (0-7): ";
+    cin >> bcolor;
+
+    cout << "Enter fill color (0-7): ";
+    cin >> fcolor;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(winW, winH);
+    glutCreateWindow("8-Connected Boundary Fill");
+
+    gluOrtho2D(0, winW, 0, winH);
+    glClearColor(0, 0, 0, 1);
+
+    glutDisplayFunc(display);
+    glutMainLoop();
+
+    return 0;
+}
+// 60 60
+//3
+//1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2D Translation---------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <stdio.h>
+
+int x1_line, y1_line, x2_line, y2_line;
+int tx, ty;
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 1.0);      // Black background
+    glColor3f(1.0, 1.0, 1.0);              // Default drawing color: white
+
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(0, 640, 0, 480);            // 2D coordinate system
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Original Line (Yellow)
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_LINES);
+        glVertex2i(x1_line, y1_line);
+        glVertex2i(x2_line, y2_line);
+    glEnd();
+
+    // Translated Line (Cyan)
+    glColor3f(0.0, 1.0, 1.0);
+    glBegin(GL_LINES);
+        glVertex2i(x1_line + tx, y1_line + ty);
+        glVertex2i(x2_line + tx, y2_line + ty);
+    glEnd();
+
+    glFlush();
+}
+
+int main(int argc, char** argv) {
+    printf("Enter the starting point of line (x1 y1): ");
+    scanf("%d %d", &x1_line, &y1_line);
+
+    printf("Enter the ending point of line (x2 y2): ");
+    scanf("%d %d", &x2_line, &y2_line);
+
+    printf("Enter translation distances tx ty: ");
+    scanf("%d %d", &tx, &ty);
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Line Translation using OpenGL (GLUT)");
+
+    init();
+    glutDisplayFunc(display);
+
+    glutMainLoop();
+    return 0;
+}
+// 100 100
+//300 200
+//50 40
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2D Scaling----------------------------------------------------------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <stdio.h>
+
+int x1_line, y1_line, x2_line, y2_line;
+int tx, ty;
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 1.0);      // Black background
+    glColor3f(1.0, 1.0, 1.0);              // Default drawing color: white
+
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(0, 640, 0, 480);            // 2D coordinate system
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Original Line (Yellow)
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_LINES);
+        glVertex2i(x1_line, y1_line);
+        glVertex2i(x2_line, y2_line);
+    glEnd();
+
+    // Translated Line (Cyan)
+    glColor3f(0.0, 1.0, 1.0);
+    glBegin(GL_LINES);
+        glVertex2i(x1_line + tx, y1_line + ty);
+        glVertex2i(x2_line + tx, y2_line + ty);
+    glEnd();
+
+    glFlush();
+}
+
+int main(int argc, char** argv) {
+    printf("Enter the starting point of line (x1 y1): ");
+    scanf("%d %d", &x1_line, &y1_line);
+
+    printf("Enter the ending point of line (x2 y2): ");
+    scanf("%d %d", &x2_line, &y2_line);
+
+    printf("Enter translation distances tx ty: ");
+    scanf("%d %d", &tx, &ty);
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Line Translation using OpenGL (GLUT)");
+
+    init();
+    glutDisplayFunc(display);
+
+    glutMainLoop();
+    return 0;
+}
+// 100 100
+//300 200
+//50 40
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2D Dimension Rotating--------------------------------------------------------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <stdio.h>
+#include <math.h>
+
+// Global variables
+float x1_, y1_, x2_, y2_, angle;
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw Original Line (Magenta - similar to BGI color 5)
+    glColor3f(1.0f, 0.0f, 1.0f);
+    glBegin(GL_LINES);
+        glVertex2f(x1_, y1_);
+        glVertex2f(x2_, y2_);
+    glEnd();
+
+    // Print text for original line
+    glRasterPos2f(x2_ + 5, y2_ + 5);
+    const char *txt1 = "Original line";
+    for (int i = 0; txt1[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, txt1[i]);
+
+    // Convert angle to radians
+    float rad = angle * (3.14159 / 180);
+
+    // Rotated coordinates
+    float x3 = (x1_ * cos(rad)) - (y1_ * sin(rad));
+    float y3 = (x1_ * sin(rad)) + (y1_ * cos(rad));
+    float x4 = (x2_ * cos(rad)) - (y2_ * sin(rad));
+    float y4 = (x2_ * sin(rad)) + (y2_ * cos(rad));
+
+    // Draw Rotated Line (White - similar to BGI color 7)
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_LINES);
+        glVertex2f(x3, y3);
+        glVertex2f(x4, y4);
+    glEnd();
+
+    // Print text for rotated line
+    glRasterPos2f(x3 + 5, y3 + 5);
+    const char *txt2 = "Line after rotation";
+    for (int i = 0; txt2[i] != '\0'; i++)
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, txt2[i]);
+
+    glFlush();
+}
+
+void init() {
+    glClearColor(0, 0, 0, 1);         // Black background (like Turbo C)
+    gluOrtho2D(0, 640, 0, 480);       // BGI-like coordinate system
+}
+
+int main(int argc, char **argv) {
+
+    printf("Enter starting point (x1 y1): ");
+    scanf("%f %f", &x1_, &y1_);
+
+    printf("Enter ending point (x2 y2): ");
+    scanf("%f %f", &x2_, &y2_);
+
+    printf("Enter angle for rotation (in degrees): ");
+    scanf("%f", &angle);
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("2D Line Rotation - GLUT Version");
+
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+
+    return 0;
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+House Drawing------------------------------------------------------------------------------------------
+#include <windows.h>
+#include <GL/glut.h>
+#include <cmath>
+#include <iostream>
+using namespace std;
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(0.0, 0.0, 0.0); // Black color for lines
+
+    // ===== HOUSE BODY =====
+    glBegin(GL_LINE_LOOP);
+        glVertex2i(60, 200);   // bottom-left
+        glVertex2i(150, 200);  // bottom-right
+        glVertex2i(150, 80);   // top-right
+        glVertex2i(60, 80);    // top-left
+    glEnd();
+
+    // ===== DOOR =====
+    glBegin(GL_LINE_LOOP);
+        glVertex2i(95, 200);   // bottom-left
+        glVertex2i(120, 200);  // bottom-right
+        glVertex2i(120, 140);  // top-right
+        glVertex2i(95, 140);   // top-left
+    glEnd();
+
+    // ===== ROOF =====
+    glBegin(GL_LINES);
+        glVertex2i(60, 80);   // top-left of wall
+        glVertex2i(100, 15);  // roof peak
+        glVertex2i(100, 15);  // roof peak
+        glVertex2i(150, 80);  // top-right of wall
+    glEnd();
+
+    // ===== CIRCULAR WINDOW =====
+    float cx = 100, cy = 60, r = 10;
+    glBegin(GL_POINTS);
+        for (float theta = 0; theta <= 360; theta += 0.1) {
+            float x = cx + r * cos(theta * 3.1416 / 180);
+            float y = cy + r * sin(theta * 3.1416 / 180);
+            glVertex2f(x, y);
+        }
+    glEnd();
+
+    glFlush();
+}
+
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);   // White background
+    glColor3f(0.0, 0.0, 0.0);           // Black color for drawing
+    glPointSize(2.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    // ✅ Keep coordinate system like Turbo C (0,0 at top-left, Y increases downward)
+    gluOrtho2D(0, 500, 500, 0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("House Drawing - OpenGL Version");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
