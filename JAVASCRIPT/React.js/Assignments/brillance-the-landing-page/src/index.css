@@ -8,14 +8,14 @@
   --font-instrument-serif: "Instrument Serif", ui-serif, serif;
 }
 
-* {
+/* * {
   @apply border-[rgba(55, 50, 47, 0.08)] outline-[rgba(55, 50, 47, 0.50)];
 }
 
 body {
   @apply bg-[#F7F5F3] text-[#37322F] antialiased;
   font-family: var(--font-inter);
-}
+} */
 
 .font-serif {
   font-family: var(--font-instrument-serif);
