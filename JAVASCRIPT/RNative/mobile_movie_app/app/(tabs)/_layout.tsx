@@ -1,6 +1,10 @@
 import { Tabs } from "expo-router";
 import React from "react";
 
+const happy = () => {
+  
+}
+
 const _Layout = () => {
   return (
     <Tabs>
