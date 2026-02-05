@@ -1,3 +1,4 @@
+import { clerkMiddleware } from "@clerk/express";
 import express from "express";
 import path from "path";
 import { connectDB } from "./config/db.js";
@@ -6,6 +7,9 @@ import { ENV } from "./config/env.js";
 const app = express();
 
 const __dirname = path.resolve();
+
+// middleware
+app.use(clerkMiddleware());
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "success" });
