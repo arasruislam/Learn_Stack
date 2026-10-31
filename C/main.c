@@ -1,47 +1,40 @@
-// Find Second Largest Number
+// Move all zero to the end of an array
 
 #include <stdio.h>
-#include <limits.h>
 
-int findSecondLargestNumber(int arr[], int n)
+void moveZerosToEnd(int arr[], int n)
 {
-  if (n < 2)
-    return -1;
-
-  int first_lst = INT_MIN;
-  int second_lst = INT_MIN;
+  int non_zero_pos = 0;
 
   for (int i = 0; i < n; i++)
   {
-    if (arr[i] > first_lst)
+    if (arr[i] != 0)
     {
-      second_lst = first_lst;
-      first_lst = arr[i];
-    }
-    else if (arr[i] < first_lst && arr[i] > second_lst)
-    {
-      second_lst = arr[i];
+      int temp = arr[i];
+
+      arr[i] = arr[non_zero_pos];
+      arr[non_zero_pos] = temp;
+
+      non_zero_pos++;
     }
   }
+}
 
-  return (second_lst == INT_MIN) ? -1 : second_lst;
+void printArray(int arr[], int n)
+{
+  for (int i = 0; i < n; i++)
+  {
+    printf("%d ", arr[i]);
+  }
+  printf("\n");
 }
 
 int main()
 {
-  int arr[] = {1, 42, 73, 9, 5, 99, 33};
+  int arr[] = {1, 3, 0, 5, 0, 3, 4, 0, 2, 7, 9};
   int n = sizeof(arr) / sizeof(arr[0]);
 
-  int result = findSecondLargestNumber(arr, n);
-
-  if (result != -1)
-  {
-    printf("Second Largest: %d\n", result);
-  }
-  else
-  {
-    printf("No second largest element exists.\n");
-  }
-
+  moveZerosToEnd(arr, n);
+  printArray(arr, n);
   return 0;
 }
