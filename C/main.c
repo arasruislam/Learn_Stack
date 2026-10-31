@@ -1,36 +1,38 @@
-// Min Max in optimized Way
+// Reverse an Array In-Place (Two Pointers)
 
 #include <stdio.h>
 
-void findMinMax(int values[], int n)
+void reverseArray(int arr[], int n)
 {
-  if (n <= 0)
-    return;
+  int left = 0;
+  int right = n - 1;
 
-  int max = values[0];
-  int min = values[0];
+  while (left < right)
+  {
+    int temp = arr[right];
+    arr[left] = arr[right];
+    arr[right] = temp;
 
+    left++;
+    right--;
+  }
+}
+
+void printVal(int arr[], int n)
+{
   for (int i = 0; i < n; i++)
   {
-    if (values[i] > max)
-    {
-      max = values[i];
-    }
-
-    if (values[i] < min)
-    {
-      min = values[i];
-    }
+    printf("%d\n", arr[i]);
   }
-
-  printf("Maximum value: %d\nMinimum value: %d", max, min);
 }
 
 int main()
 {
-  int values[] = {1, 7, 9, -3, 4, -45, 6, -90, -34, 50};
-  int n = sizeof(values) / sizeof(values[0]);
+  int arr[] = {10, 20, 30, 40, 50};
+  int n = sizeof(arr) / sizeof(arr[0]);
 
-  findMinMax(values, n);
+  reverseArray(arr, n);
+  printVal(arr, n);
+
   return 0;
 }

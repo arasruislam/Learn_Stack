@@ -1,2 +1,5 @@
-Maximum value: 50
-Minimum value: -90
+50
+40
+30
+40
+50
